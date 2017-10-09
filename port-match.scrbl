@@ -21,6 +21,9 @@ Like @racket[match], but matches against values read from @racket[in-port].
  @item{@racket[(#,(racketidfont "char") tail ...)] --- matches a single UTF-8 character.}
  @item{@racket[(#,(racketidfont "string") len tail ...)] --- matches a sequence
        of exactly @racket[len] characters.}
+ @item{@racket[(#,(racketidfont "regexp") pattern tail ...)] --- matches a sequence
+       of characters or bytes which match @racket[pattern]. The pattern must match
+       immediately to count as a match (as if it began with @code{^}).}
  @item{@racketidfont{eof} --- matches end-of-file.}
  @item{@racket[(#,(racketidfont "seq") head ...)] --- matches each @racket[head] in sequence.}
 

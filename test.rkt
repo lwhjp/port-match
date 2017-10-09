@@ -20,6 +20,13 @@
 (check-equal? (port-match (oib #"\3\4\5\6") [(bytes 3 bstr) bstr]) #"\3\4\5")
 (check-equal? (port-match (ois "テスト") [(char c) c]) #\テ)
 (check-equal? (port-match (ois "テスト") [(string 2 s) s]) "テス")
+(check-equal? (port-match (ois "abcd")
+                [(regexp #rx".c") 'bad]
+                [(seq (char) (regexp #rx".c")) 'good])
+              'good)
+(check-equal? (port-match (ois "abcd")
+                [(or (regexp #rx"z" v) (char v)) v])
+              #\a)
 
 (check-exn exn:fail? (λ () (port-match (oib #"") [(byte b) b])))
 (check-equal? (port-match (oib #"\3\4") [(bytes 3 bstr) bstr] [(byte b) b]) 3)

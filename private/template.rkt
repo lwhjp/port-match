@@ -12,3 +12,19 @@
 
 (define (no-match)
   (error 'port-match "no match"))
+
+(define (regexp-try-match/exact-prefix pattern input)
+  (let/ec escape
+    (regexp-try-match
+     pattern
+     input
+     0
+     #f
+     (make-output-port
+      #f
+      always-evt
+      (λ (bstr start end . rest)
+        (define count (- end start))
+        (when (positive? count) (escape #f))
+        count)
+      void))))

@@ -24,6 +24,7 @@
 (struct Bytes Datum (length) #:transparent)
 (struct Char Datum () #:transparent)
 (struct String Datum (length) #:transparent)
+(struct Regexp Datum (pattern) #:transparent)
 
 (struct App Tail-Pattern (proc tail) #:transparent)
 (struct Pred Tail-Pattern (proc) #:transparent)
@@ -41,7 +42,8 @@
     (pattern ((~datum byte) pat:tail-pattern ...) #:attr v (Byte (And (attribute pat.v))))
     (pattern ((~datum bytes) length:expr pat:tail-pattern ...) #:attr v (Bytes (And (attribute pat.v)) #'length))
     (pattern ((~datum char) pat:tail-pattern ...) #:attr v (Char (And (attribute pat.v))))
-    (pattern ((~datum string) length:expr pat:tail-pattern ...) #:attr v (String (And (attribute pat.v)) #'length)))
+    (pattern ((~datum string) length:expr pat:tail-pattern ...) #:attr v (String (And (attribute pat.v)) #'length))
+    (pattern ((~datum regexp) pattern:expr pat:tail-pattern ...) #:attr v (Regexp (And (attribute pat.v)) #'pattern)))
   (define-syntax-class tail-pattern
     (pattern (~datum _) #:attr v (Any))
     (pattern ((~datum and) pat:tail-pattern ...) #:attr v (And (attribute pat.v)))

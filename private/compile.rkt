@@ -68,7 +68,12 @@
       [(Char _) #'(let ([datum (read-char in)]) (if (eof-object? datum) fail rest))]
       [(String _ length-stx)
        #`(let* ([length #,length-stx] [datum (read-string length in)])
-           (if (or (eof-object? datum) (< (string-length datum) length)) fail rest))])))
+           (if (or (eof-object? datum) (< (string-length datum) length)) fail rest))]
+      [(Regexp _ pattern)
+       #`(cond
+           [(regexp-try-match/exact-prefix #,pattern in)
+            => (lambda (match-result) (let ([datum (car match-result)]) rest))]
+           [else fail])])))
 
 (define (compile-tail pat rest datum-id vars in-id fail-stx)
   (match pat
