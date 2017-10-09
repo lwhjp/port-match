@@ -100,15 +100,15 @@
                     [peek-ids '()])
        (if (null? pats)
            #`(begin
-               (commit (apply max (map file-position (list #,@peek-ids))) in-id)
+               (commit (apply max (map file-position (list #,@peek-ids))) #,in-id)
                #,(rest vars))
            (with-syntax ([peek-in (gensym 'peek)])
              #`(let ([peek-in (peeking-input-port #,in-id)])
-                 (pat-compile (car pats)
-                              (λ (vars) (next-pat (cdr pats) vars (cons #'peek-in peek-ids)))
-                              vars
-                              #'peek-in
-                              fail-stx)))))]
+                 #,(pat-compile (car pats)
+                                (λ (vars) (next-pat (cdr pats) vars (cons #'peek-in peek-ids)))
+                                vars
+                                #'peek-in
+                                fail-stx)))))]
     [(Or '()) fail-stx]
     [(Or (list pat)) (pat-compile pat rest vars in-id fail-stx)]
     [(Or pats)
