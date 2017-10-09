@@ -1,7 +1,15 @@
 #lang racket/base
 
-(require rackunit
+(require (for-syntax racket/base)
+         rackunit
          "main.rkt")
+
+(define-syntax (convert-syntax-error stx)
+  (syntax-case stx ()
+    [(_ expr)
+     (with-handlers ([exn:fail:syntax? (λ (e) #`(error '#,(exn-message e)))])
+       (parameterize ([error-print-source-location #f])
+         (local-expand #'expr 'expression '())))]))
 
 (define oib open-input-bytes)
 (define ois open-input-string)
@@ -35,3 +43,5 @@
                 [(char (? char-numeric?)) 'bad]
                 [(char (? char-alphabetic?)) 'good])
               'good)
+
+(check-exn exn:fail? (λ () (convert-syntax-error (port-match (oib #"x") [(or (byte a) (byte b)) 'dummy]))))

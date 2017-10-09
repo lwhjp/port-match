@@ -112,7 +112,13 @@
     [(Or '()) fail-stx]
     [(Or (list pat)) (pat-compile pat rest vars in-id fail-stx)]
     [(Or pats)
-     ; TODO: check pattern vars are the same
+     (let ([sorted-pat-vars (map (λ (pat) (sort (pattern-vars pat) symbol<? #:key syntax-e)) pats)])
+       (define vars (car sorted-pat-vars))
+       (unless (andmap (λ (pat-vars)
+                         (and (eqv? (length vars) (length pat-vars))
+                              (andmap free-identifier=? vars pat-vars)))
+                       (cdr sorted-pat-vars))
+         (raise-syntax-error 'port-match "different variables bound in (or ...) patterns")))
      (with-syntax* ([(pat-id ...) (generate-temporaries pats)]
                     [(fail-stx ...) (stx-cdr #`((pat-id) ... #,fail-stx))])
        #`(letrec
